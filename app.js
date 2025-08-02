@@ -91,6 +91,7 @@ const connectDB = async () => {
     
     // Importar modelos para registrarlos
     require('./models/User.model');
+    require('./models/Symbol.model');
     console.log('📦 Modelos registrados:', Object.keys(mongoose.models));
     
   } catch (error) {

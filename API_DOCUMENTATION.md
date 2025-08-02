@@ -38,7 +38,6 @@ avatar: [archivo de imagen - OPCIONAL]
       },
       "preferences": {
         "favoriteStocks": [],
-        "watchlist": [],
         "notifications": true,
         "theme": "system"
       },
@@ -72,7 +71,6 @@ avatar: [archivo de imagen - OPCIONAL]
       },
       "preferences": {
         "favoriteStocks": [],
-        "watchlist": [],
         "notifications": true,
         "theme": "system"
       },
@@ -120,7 +118,6 @@ Content-Type: application/json
       },
       "preferences": {
         "favoriteStocks": [],
-        "watchlist": [],
         "notifications": true,
         "theme": "system"
       },
@@ -159,7 +156,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
       },
       "preferences": {
         "favoriteStocks": ["AAPL", "GOOGL"],
-        "watchlist": ["TSLA", "AMZN"],
         "notifications": true,
         "theme": "system"
       },
@@ -187,7 +183,6 @@ Content-Type: application/json
   "name": "Nuevo Nombre",
   "preferences": {
     "favoriteStocks": ["AAPL", "GOOGL"],
-    "watchlist": ["TSLA", "AMZN"],
     "notifications": false,
     "theme": "dark"
   }
@@ -211,7 +206,6 @@ Content-Type: application/json
       },
       "preferences": {
         "favoriteStocks": ["AAPL", "GOOGL"],
-        "watchlist": ["TSLA", "AMZN"],
         "notifications": false,
         "theme": "dark"
       },
@@ -257,7 +251,6 @@ avatar: [archivo de imagen]
       },
       "preferences": {
         "favoriteStocks": [],
-        "watchlist": [],
         "notifications": true,
         "theme": "system"
       },
@@ -301,7 +294,6 @@ Authorization: Bearer <token>
       },
       "preferences": {
         "favoriteStocks": [],
-        "watchlist": [],
         "notifications": true,
         "theme": "system"
       },
@@ -511,7 +503,6 @@ const updateProfile = async (profileData: {
   name?: string;
   preferences?: {
     favoriteStocks?: string[];
-    watchlist?: string[];
     notifications?: boolean;
     theme?: 'light' | 'dark' | 'system';
   };
@@ -797,4 +788,410 @@ curl -X POST http://localhost:8080/api/auth/avatar \
 | POST | `/auth/avatar` | `multipart/form-data` | avatar | Sí |
 | DELETE | `/auth/avatar` | - | - | Sí |
 
-¡Tu backend MERVAL está listo para manejar usuarios completos con avatares en Cloudinary! 🚀
+---
+
+## 📊 Endpoints de Preferencias de Usuario
+
+### 1. Obtener Preferencias Actuales
+```
+GET http://localhost:8080/api/user/preferences
+```
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "status": 200,
+  "message": "Preferencias obtenidas exitosamente",
+  "data": {
+    "preferences": {
+      "favoriteStocks": ["GGAL", "YPFD", "ALUA"],
+      "notifications": true,
+      "theme": "dark"
+    }
+  }
+}
+```
+
+### 2. Actualizar Preferencias Completas
+```
+PUT http://localhost:8080/api/user/preferences
+```
+
+**Headers:**
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "favoriteStocks": ["GGAL", "YPFD", "ALUA"],
+  "notifications": false,
+  "theme": "light"
+}
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "status": 200,
+  "message": "Preferencias actualizadas exitosamente",
+  "data": {
+    "preferences": {
+      "favoriteStocks": ["GGAL", "YPFD", "ALUA"],
+      "notifications": false,
+      "theme": "light"
+    }
+  }
+}
+```
+
+### 3. Actualización Parcial de Preferencias
+```
+PATCH http://localhost:8080/api/user/preferences
+```
+
+**Headers:**
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Body (solo campos a actualizar):**
+```json
+{
+  "theme": "dark",
+  "notifications": true
+}
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "status": 200,
+  "message": "Preferencias actualizadas parcialmente",
+  "data": {
+    "preferences": {
+      "favoriteStocks": ["GGAL", "YPFD", "ALUA"],
+      "notifications": true,
+      "theme": "dark"
+    }
+  }
+}
+```
+
+### 4. Agregar Acción a Favoritos
+```
+POST http://localhost:8080/api/user/preferences/stocks/favorite
+```
+
+**Headers:**
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "symbol": "MIRG"
+}
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "status": 200,
+  "message": "Acción agregada a favoritos exitosamente",
+  "data": {
+    "preferences": {
+      "favoriteStocks": ["GGAL", "YPFD", "ALUA", "MIRG"],
+      "notifications": true,
+      "theme": "dark"
+    },
+    "addedSymbol": "MIRG"
+  }
+}
+```
+
+**Respuesta si ya existe (409):**
+```json
+{
+  "status": 409,
+  "message": "La acción ya está en favoritos",
+  "data": {
+    "preferences": {
+      "favoriteStocks": ["GGAL", "YPFD", "ALUA", "MIRG"],
+      "notifications": true,
+      "theme": "dark"
+    }
+  }
+}
+```
+
+### 5. Quitar Acción de Favoritos
+```
+DELETE http://localhost:8080/api/user/preferences/stocks/favorite/MIRG
+```
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "status": 200,
+  "message": "Acción removida de favoritos exitosamente",
+  "data": {
+    "preferences": {
+      "favoriteStocks": ["GGAL", "YPFD", "ALUA"],
+      "notifications": true,
+      "theme": "dark"
+    },
+    "removedSymbol": "MIRG"
+  }
+}
+```
+
+### 8. Obtener Símbolos Válidos (Sin Autenticación)
+```
+GET http://localhost:8080/api/user/preferences/stocks/symbols
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "status": 200,
+  "message": "Símbolos válidos obtenidos exitosamente",
+  "data": {
+    "symbols": [
+      "ALUA", "BBAR", "BMA", "BYMA", "CEPU", "COME", "CRES", "CVH", "EDN",
+      "GGAL", "HARG", "HAVA", "INTR", "LOMA", "METR", "MIRG", "PAMP",
+      "SUPV", "TECO2", "TGNO4", "TGSU2", "TRAN", "TXAR", "VALO", "YPFD"
+    ],
+    "count": 25
+  }
+}
+```
+
+## 🔒 Consideraciones de Seguridad para Preferencias
+
+- **Autenticación**: Todos los endpoints (excepto `/symbols`) requieren JWT token válido
+- **Autorización**: Usuario solo puede modificar sus propias preferencias
+- **Validación**: Símbolos de acciones validados contra base de datos en tiempo real
+- **Rate Limiting**: Aplicado globalmente (100 requests/15min por IP)
+- **Sanitización**: Input limpiado para prevenir XSS/injection
+- **Cache**: Símbolos válidos cacheados por 1 hora para mejor rendimiento
+
+## �️ Sistema de Símbolos MERVAL
+
+### Base de Datos de Símbolos
+Los símbolos MERVAL se almacenan en la colección `symbols` con la siguiente estructura:
+
+```javascript
+{
+  "_id": "ObjectId",
+  "symbol": "GGAL",                    // Símbolo único (mayúsculas)
+  "name": "Grupo Financiero Galicia S.A.",  // Nombre completo de la empresa
+  "sector": "Bancos",                  // Sector económico
+  "market": "MERVAL",                  // Mercado (MERVAL, MAE, BYMA)
+  "currency": "ARS",                   // Moneda (ARS, USD)
+  "isActive": true,                    // Estado activo/inactivo
+  "description": "Uno de los principales grupos financieros...",
+  "website": "https://www.galicia.com.ar",
+  "createdAt": "2025-07-31T...",
+  "updatedAt": "2025-07-31T..."
+}
+```
+
+### Sectores Disponibles
+```
+- Bancos (5 símbolos)
+- Energía (7 símbolos) 
+- Construcción (3 símbolos)
+- Telecomunicaciones (2 símbolos)
+- Alimentos (2 símbolos)
+- Metalurgia (1 símbolo)
+- Petróleo y Gas (1 símbolo)
+- Siderurgia (1 símbolo)
+- Holding (1 símbolo)
+- Otros (2 símbolos)
+```
+
+### 🛠️ Scripts de Administración
+
+#### Poblar Base de Datos con Símbolos
+```bash
+npm run seed-symbols
+```
+Este script:
+- ✅ Conecta a MongoDB
+- 🗑️ Elimina símbolos existentes (si los hay)
+- 📊 Inserta 25 símbolos MERVAL con información completa
+- 🔍 Verifica la integridad de los datos
+- 📈 Muestra resumen por sector
+
+#### Setup Completo del Proyecto
+```bash
+npm run setup
+```
+Ejecuta:
+1. `npm install` - Instala dependencias
+2. `npm run migrate` - Ejecuta migraciones (si existen)
+3. `npm run seed-symbols` - Puebla símbolos MERVAL
+
+### ⚡ Cache y Rendimiento
+- **Cache de símbolos**: 1 hora de duración
+- **Fallback**: Lista hardcodeada si falla la BD
+- **Índices optimizados**: Por símbolo, sector, estado activo
+- **Consultas eficientes**: Solo símbolos activos
+
+## 📊 Símbolos MERVAL Actuales (25 símbolos)
+
+**Por Sector:**
+- **Bancos**: BBAR, BMA, GGAL, SUPV, VALO
+- **Energía**: CEPU, EDN, METR, PAMP, TGNO4, TGSU2, TRAN  
+- **Construcción**: HARG, INTR, LOMA
+- **Telecomunicaciones**: CVH, TECO2
+- **Alimentos**: CRES, HAVA
+- **Otros**: BYMA, MIRG
+- **Metalurgia**: ALUA
+- **Petróleo y Gas**: YPFD
+- **Siderurgia**: TXAR
+- **Holding**: COME
+
+## 📋 Resumen de Endpoints Completo
+
+| Método | Endpoint | Headers | Body | Autenticación |
+|--------|----------|---------|------|---------------|
+| **AUTENTICACIÓN** |
+| POST | `/auth/register` | `multipart/form-data` OR `application/json` | email, password, name, acceptTerms, [avatar] | No |
+| POST | `/auth/login` | `application/json` | email, password | No |
+| GET | `/auth/profile` | - | - | Sí |
+| PUT | `/auth/profile` | `application/json` | name, preferences | Sí |
+| POST | `/auth/avatar` | `multipart/form-data` | avatar | Sí |
+| DELETE | `/auth/avatar` | - | - | Sí |
+| **PREFERENCIAS** |
+| GET | `/user/preferences` | - | - | Sí |
+| PUT | `/user/preferences` | `application/json` | preferences object | Sí |
+| PATCH | `/user/preferences` | `application/json` | partial preferences | Sí |
+| POST | `/user/preferences/stocks/favorite` | `application/json` | { symbol } | Sí |
+| DELETE | `/user/preferences/stocks/favorite/:symbol` | - | - | Sí |
+| GET | `/user/preferences/stocks/symbols` | - | - | No |
+
+## 🚀 Guía de Uso para Desarrolladores
+
+### 🔧 Configuración Inicial
+
+1. **Variables de Entorno** (crear archivo `.env`):
+```env
+# Base de datos
+MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/MervalDB
+
+# JWT
+JWT_SECRET=tu_jwt_secret_muy_seguro
+
+# Cloudinary (para avatares)
+CLOUDINARY_CLOUD_NAME=tu_cloud_name
+CLOUDINARY_API_KEY=tu_api_key  
+CLOUDINARY_API_SECRET=tu_api_secret
+
+# Entorno
+NODE_ENV=development
+PORT=8080
+```
+
+2. **Instalación y Setup**:
+```bash
+git clone https://github.com/nicopetcoff/pfi_backend_principal.git
+cd pfi_backend_principal
+npm install
+npm run setup  # Instala dependencias y puebla símbolos
+```
+
+3. **Desarrollo**:
+```bash
+npm run dev     # Servidor con nodemon (reinicio automático)
+npm start       # Servidor en modo producción
+```
+
+### 📱 Flujo de Autenticación Recomendado
+
+1. **Registro/Login** → Obtener token JWT
+2. **Usar token** en header `Authorization: Bearer <token>`
+3. **Gestionar avatar** (opcional) con endpoints específicos
+4. **Configurar preferencias** usando endpoints de preferencias
+
+### 🎯 Casos de Uso Comunes
+
+#### Registro con Avatar
+```javascript
+const formData = new FormData();
+formData.append('email', 'user@example.com');
+formData.append('password', 'password123');
+formData.append('name', 'Juan Pérez');
+formData.append('acceptTerms', 'true');
+formData.append('avatar', avatarFile);
+
+fetch('/api/auth/register', {
+  method: 'POST',
+  body: formData
+});
+```
+
+#### Agregar Acción a Favoritos
+```javascript
+fetch('/api/user/preferences/stocks/favorite', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ symbol: 'GGAL' })
+});
+```
+
+#### Obtener Símbolos Válidos
+```javascript
+const symbols = await fetch('/api/user/preferences/stocks/symbols')
+  .then(res => res.json());
+```
+
+### ⚠️ Manejo de Errores
+
+Todos los endpoints retornan errores en formato consistente:
+
+```json
+{
+  "status": 400,
+  "message": "Descripción del error",
+  "errors": ["Error específico 1", "Error específico 2"]
+}
+```
+
+**Códigos de Estado Comunes:**
+- `200` - Éxito
+- `201` - Creado exitosamente  
+- `400` - Error de validación
+- `401` - No autenticado
+- `403` - Sin permisos
+- `404` - No encontrado
+- `409` - Conflicto (ej: ya existe)
+- `500` - Error del servidor
+
+### 🔄 Versionado y Mantenimiento
+
+- **Versión actual**: 1.0.0
+- **Base de datos**: Símbolos actualizables vía script
+- **Cache**: Automático para símbolos (1 hora)
+- **Logs**: Completos en desarrollo, básicos en producción
+
+¡Tu backend MERVAL está completamente listo con autenticación, avatares, preferencias de usuario y gestión de símbolos desde base de datos! 🚀📊💼

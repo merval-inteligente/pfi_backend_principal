@@ -1,4 +1,36 @@
 const { body, validationResult } = require("express-validator");
+const Symbol = require("../models/Symbol.model");
+
+// Función para obtener símbolos válidos (con cache)
+let symbolsCache = null;
+let lastCacheUpdate = null;
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hora
+
+async function getValidSymbols() {
+  const now = Date.now();
+  
+  if (symbolsCache && lastCacheUpdate && (now - lastCacheUpdate) < CACHE_DURATION) {
+    return symbolsCache;
+  }
+  
+  try {
+    const symbols = await Symbol.getActiveSymbols();
+    const symbolsArray = symbols.map(symbol => symbol.symbol);
+    
+    symbolsCache = symbolsArray;
+    lastCacheUpdate = now;
+    
+    return symbolsArray;
+  } catch (error) {
+    console.error('Error obteniendo símbolos para validación:', error);
+    // Fallback a lista hardcodeada
+    return [
+      'ALUA', 'BBAR', 'BMA', 'BYMA', 'CEPU', 'COME', 'CRES', 'CVH', 'EDN', 
+      'GGAL', 'HARG', 'HAVA', 'INTR', 'LOMA', 'METR', 'MIRG', 'PAMP', 
+      'SUPV', 'TECO2', 'TGNO4', 'TGSU2', 'TRAN', 'TXAR', 'VALO', 'YPFD'
+    ];
+  }
+}
 
 // Middleware para validar registro de usuario (con FormData)
 const validateUserRegistration = [
@@ -65,8 +97,115 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+// Middleware para validar preferencias completas
+const validatePreferencesUpdate = [
+  body("favoriteStocks")
+    .optional()
+    .isArray()
+    .withMessage("favoriteStocks debe ser un array")
+    .custom(async (stocks) => {
+      if (stocks && stocks.length > 0) {
+        const validSymbols = await getValidSymbols();
+        const invalidSymbols = stocks.filter(symbol => 
+          !validSymbols.includes(symbol.toUpperCase())
+        );
+        if (invalidSymbols.length > 0) {
+          throw new Error(`Símbolos inválidos: ${invalidSymbols.join(', ')}`);
+        }
+      }
+      return true;
+    }),
+
+  body("notifications")
+    .optional()
+    .isBoolean()
+    .withMessage("notifications debe ser un valor booleano"),
+
+  body("theme")
+    .optional()
+    .isIn(['light', 'dark', 'system'])
+    .withMessage("theme debe ser 'light', 'dark' o 'system'")
+];
+
+// Middleware para validar preferencias parciales
+const validatePreferencesPatch = [
+  body("favoriteStocks")
+    .optional()
+    .isArray()
+    .withMessage("favoriteStocks debe ser un array")
+    .custom(async (stocks) => {
+      if (stocks && stocks.length > 0) {
+        const validSymbols = await getValidSymbols();
+        const invalidSymbols = stocks.filter(symbol => 
+          !validSymbols.includes(symbol.toUpperCase())
+        );
+        if (invalidSymbols.length > 0) {
+          throw new Error(`Símbolos inválidos: ${invalidSymbols.join(', ')}`);
+        }
+      }
+      return true;
+    }),
+
+  body("notifications")
+    .optional()
+    .isBoolean()
+    .withMessage("notifications debe ser un valor booleano"),
+
+  body("theme")
+    .optional()
+    .isIn(['light', 'dark', 'system'])
+    .withMessage("theme debe ser 'light', 'dark' o 'system'")
+];
+
+// Middleware para validar símbolo de acción
+const validateStockSymbol = [
+  body("symbol")
+    .notEmpty()
+    .withMessage("Symbol es requerido")
+    .isString()
+    .withMessage("Symbol debe ser un string")
+    .isLength({ min: 3, max: 6 })
+    .withMessage("Symbol debe tener entre 3 y 6 caracteres")
+    .custom(async (symbol) => {
+      const validSymbols = await getValidSymbols();
+      if (!validSymbols.includes(symbol.toUpperCase())) {
+        throw new Error(`Symbol '${symbol}' no es válido para MERVAL`);
+      }
+      return true;
+    })
+];
+
+// Middleware para validar sector
+const validateSector = [
+  body("sector")
+    .notEmpty()
+    .withMessage("Sector es requerido")
+    .isString()
+    .withMessage("Sector debe ser un string")
+    .isIn([
+      'Bancos',
+      'Petróleo y Gas', 
+      'Telecomunicaciones',
+      'Energía',
+      'Siderurgia',
+      'Alimentos',
+      'Construcción',
+      'Metalurgia',
+      'Papel',
+      'Transporte',
+      'Holding',
+      'Otros'
+    ])
+    .withMessage("Sector no es válido")
+];
+
 module.exports = {
   validateUserRegistration,
   validateUserLogin,
-  handleValidationErrors
+  validatePreferencesUpdate,
+  validatePreferencesPatch,
+  validateStockSymbol,
+  validateSector,
+  handleValidationErrors,
+  getValidSymbols
 };

@@ -3,45 +3,49 @@
 
 ## 🚀 Descripción
 
-Backend moderno y escalable para la plataforma MERVAL, desarrollado con Node.js, Express y MongoDB. Esta API RESTful proporciona servicios completos para la gestión de usuarios con autenticación segura y manejo de avatares en Cloudinary.
+Backend moderno y escalable para la plataforma MERVAL, desarrollado con Node.js, Express y MongoDB. Esta API RESTful proporciona servicios completos para la gestión de usuarios, autenticación JWT, sistema de preferencias de acciones y gestión de sectores financieros.
 
 ## 📋 Características Principales
 
 - ✅ **API RESTful** moderna con Express.js
-- ✅ **Autenticación JWT** segura
+- ✅ **Autenticación JWT** segura con expiración extendida (7 días)
 - ✅ **Sistema de Avatares** con Cloudinary
+- ✅ **Gestión de Preferencias** para favoritos de acciones
+- ✅ **Sectores Financieros** organizados del MERVAL
+- ✅ **Agregación por Sectores** - Agregar todas las acciones de un sector a favoritos
 - ✅ **Validación de datos** robusta con express-validator
 - ✅ **Base de datos MongoDB** con Mongoose
 - ✅ **Seguridad avanzada** con Helmet y middleware personalizado
-- ✅ **Soporte React Native** completo
-- ✅ **Documentación completa** de API
+- ✅ **Health Check** para monitoreo de servicios
 
 ## 🛠️ Tecnologías Utilizadas
 
 - **Node.js** (≥18.0.0)
 - **Express.js** 4.18.2
 - **MongoDB Atlas** con Mongoose 8.0.3
-- **JWT** para autenticación
+- **JWT** para autenticación (expiración 7 días)
 - **Cloudinary** para gestión de avatares
 - **Bcrypt** para encriptación de contraseñas
 - **Express Validator** para validación
 - **Helmet** para seguridad
 - **Morgan** para logging
 - **Multer** para manejo de archivos
+- **Nodemailer** para servicios de email
 
 ## 📦 Instalación
 
 ### Prerrequisitos
 
 - Node.js ≥18.0.0
-- MongoDB (local o Atlas)
+- MongoDB Atlas o local
 - Cuenta de Cloudinary
+- Servicio SMTP para emails
 
 ### Pasos de Instalación
 
 1. **Clonar el repositorio**
    ```bash
-   git clone [repositorio-url]
+   git clone https://github.com/nicopetcoff/pfi_backend_principal.git
    cd BACKEND
    ```
 
@@ -49,6 +53,202 @@ Backend moderno y escalable para la plataforma MERVAL, desarrollado con Node.js,
    ```bash
    npm install
    ```
+
+3. **Configurar variables de entorno**
+   Crear archivo `.env` con:
+   ```env
+   # MongoDB
+   MONGO_URI=mongodb+srv://usuario:password@cluster.mongodb.net/MervalDB
+
+   # JWT
+   JWT_SECRET=tu_jwt_secret_muy_seguro
+   JWT_EXPIRES_IN=7d
+
+   # Cloudinary
+   CLOUDINARY_CLOUD_NAME=tu_cloud_name
+   CLOUDINARY_API_KEY=tu_api_key
+   CLOUDINARY_API_SECRET=tu_api_secret
+
+   # Email
+   EMAIL_USER=tu_email@gmail.com
+   EMAIL_PASS=tu_app_password
+
+   # Servidor
+   PORT=8080
+   NODE_ENV=development
+   ```
+
+4. **Poblar la base de datos con símbolos**
+   ```bash
+   node scripts/seed-symbols.js
+   ```
+
+5. **Iniciar el servidor**
+   ```bash
+   npm start
+   ```
+
+## 🔗 Endpoints Principales
+
+### 🔐 Autenticación
+- `POST /api/auth/register` - Registro de usuario (con/sin avatar)
+- `POST /api/auth/login` - Login de usuario
+- `GET /api/auth/profile` - Obtener perfil del usuario
+- `PUT /api/auth/profile` - Actualizar perfil del usuario
+
+### 📊 Preferencias de Acciones
+- `GET /api/user/preferences` - Obtener preferencias del usuario
+- `GET /api/user/preferences/stocks/symbols` - Símbolos válidos (sin auth)
+- `GET /api/user/preferences/stocks/complete` - Todas las acciones con info completa
+- `GET /api/user/preferences/stocks/sectors` - Sectores disponibles
+- `POST /api/user/preferences/stocks/favorite` - Agregar acción a favoritos
+- `POST /api/user/preferences/stocks/favorite/sector` - Agregar todas las acciones de un sector
+- `DELETE /api/user/preferences/stocks/favorite/:symbol` - Quitar acción de favoritos
+
+### 🏥 Monitoreo
+- `GET /api/base/health` - Health check del sistema
+
+### 📧 Email
+- `POST /api/mail/send` - Enviar email
+- `POST /api/mail/reset-password` - Solicitar reset de contraseña
+
+## 📈 Sectores Financieros Disponibles
+
+El sistema maneja 12 sectores del MERVAL:
+- **Bancos** (BBAR, BMA, GGAL, SUPV, VALO)
+- **Petróleo y Gas** (YPF, TGNO4, BOLT)
+- **Telecomunicaciones** (CVH, TECO2)
+- **Energía** (EDN, TGLT, CRES)
+- **Siderurgia** (TX, SIDE)
+- **Alimentos** (LEDE, GRIM)
+- **Construcción** (CECO2, BOLT)
+- **Metalurgia** (ALUA, CELU)
+- **Papel** (PAPX, CORD)
+- **Transporte** (DOME, GARO)
+- **Holding** (GRIM, CRES)
+- **Otros** (BYMA, CVAR)
+
+## 🔧 Configuración del Proyecto
+
+### Estructura del Proyecto
+```
+BACKEND/
+├── app.js                 # Archivo principal
+├── config/
+│   └── index.js          # Configuración de la aplicación
+├── controllers/
+│   ├── auth.controller.js
+│   ├── base.controller.js
+│   ├── mail.controller.js
+│   └── preferences.controller.js
+├── middleware/
+│   ├── auth.js           # Middleware de autenticación JWT
+│   └── validators.js     # Validadores de entrada
+├── models/
+│   ├── User.model.js     # Modelo de usuario
+│   └── Symbol.model.js   # Modelo de símbolos/acciones
+├── routes/
+│   ├── api.js           # Enrutador principal
+│   ├── index.js         # Rutas base
+│   └── api/
+│       ├── auth.route.js
+│       ├── base.route.js
+│       ├── mail.route.js
+│       └── preferences.route.js
+├── scripts/
+│   └── seed-symbols.js   # Script para poblar símbolos
+├── services/
+│   ├── auth.service.js
+│   ├── cloudinary.js
+│   ├── nodemailer.js
+│   ├── preferences.service.js
+│   └── user.service.js
+└── package.json
+```
+
+## 🚀 Uso de la API
+
+### Autenticación
+Todos los endpoints (excepto registro, login y símbolos) requieren JWT token:
+```javascript
+headers: {
+  'Authorization': 'Bearer tu_jwt_token',
+  'Content-Type': 'application/json'
+}
+```
+
+### Ejemplo: Agregar sector completo a favoritos
+```javascript
+POST /api/user/preferences/stocks/favorite/sector
+{
+  "sector": "Bancos"
+}
+```
+
+### Ejemplo: Obtener preferencias
+```javascript
+GET /api/user/preferences
+// Respuesta:
+{
+  "status": 200,
+  "data": {
+    "preferences": {
+      "favoriteStocks": ["GGAL", "YPF", "BBAR"],
+      "notifications": true,
+      "theme": "light"
+    }
+  }
+}
+```
+
+## 🔄 Scripts Disponibles
+
+- `npm start` - Iniciar servidor en producción
+- `npm run dev` - Iniciar servidor en desarrollo (si tienes nodemon)
+- `node scripts/seed-symbols.js` - Poblar base de datos con símbolos
+
+## 🛡️ Seguridad
+
+- **JWT Tokens** con expiración de 7 días
+- **Bcrypt** para encriptación de contraseñas
+- **Helmet** para headers de seguridad
+- **Validación robusta** de todos los inputs
+- **Middleware de autenticación** en endpoints protegidos
+- **CORS** configurado para frontend
+
+## 📝 Cambios Recientes
+
+### v1.3.0 (Agosto 2025)
+- ✅ **JWT extendido** a 7 días de expiración
+- ✅ **Endpoint por sectores** - Agregar todas las acciones de un sector
+- ✅ **Limpieza de código** - Eliminados archivos redundantes
+- ✅ **Simplificación** del sistema de health check
+- ✅ **Documentación actualizada**
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crear rama feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abrir Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
+## 👨‍💻 Autor
+
+**Nicolas Petcoff**
+- GitHub: [@nicopetcoff](https://github.com/nicopetcoff)
+
+## 📞 Soporte
+
+Para soporte técnico, crear un issue en el repositorio de GitHub.
+
+---
+
+**MERVAL Backend API** - Sistema robusto para gestión financiera 📈
 
 3. **Configurar variables de entorno**
    ```bash

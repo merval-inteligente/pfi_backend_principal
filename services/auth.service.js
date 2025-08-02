@@ -43,7 +43,6 @@ class AuthService {
         name,
         preferences: {
           favoriteStocks: [],
-          watchlist: [],
           notifications: true,
           theme: 'system'
         },

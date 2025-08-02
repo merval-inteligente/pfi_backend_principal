@@ -41,10 +41,6 @@ const UserSchema = new mongoose.Schema({
       type: [String],
       default: []
     },
-    watchlist: {
-      type: [String], 
-      default: []
-    },
     notifications: {
       type: Boolean,
       default: true
@@ -58,6 +54,14 @@ const UserSchema = new mongoose.Schema({
   lastLogin: {
     type: Date,
     default: Date.now
+  },
+  resetPasswordToken: {
+    type: String,
+    default: undefined
+  },
+  resetPasswordExpires: {
+    type: Date,
+    default: undefined
   }
 }, {
   timestamps: true,

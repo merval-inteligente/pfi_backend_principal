@@ -5,6 +5,7 @@ var router = express.Router();
 var baseRoutes = require("./api/base.route");
 var authRoutes = require("./api/auth.route");
 var mailRoutes = require("./api/mail.route");
+var preferencesRoutes = require("./api/preferences.route");
 
 // Rutas básicas
 router.use("/base", baseRoutes);
@@ -14,5 +15,8 @@ router.use("/auth", authRoutes);
 
 // Rutas de mail (mantenemos para el servicio de email)
 router.use("/mail", mailRoutes);
+
+// Rutas de preferencias de usuario
+router.use("/user/preferences", preferencesRoutes);
 
 module.exports = router;
