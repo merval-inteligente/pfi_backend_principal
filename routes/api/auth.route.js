@@ -103,7 +103,19 @@ router.delete("/avatar",
  * @headers Authorization: Bearer <token>
  */
 router.get("/verify",
+  authenticateToken,
   AuthController.verifyToken
+);
+
+/**
+ * @route   GET /api/auth/profile
+ * @desc    Obtener perfil del usuario autenticado
+ * @access  Private (requiere token)
+ * @headers Authorization: Bearer <token>
+ */
+router.get("/profile",
+  authenticateToken,
+  AuthController.verifyToken  // Reutilizamos el mismo método
 );
 
 module.exports = router;
