@@ -22,7 +22,7 @@ class AuthService {
   // Crear un nuevo usuario
   async createUser(userData) {
     try {
-      const { email, password, name, acceptTerms } = userData;
+      const { email, password, name, acceptTerms, investmentKnowledge, riskAppetite } = userData;
 
       // Verificar que los términos sean aceptados
       if (!acceptTerms) {
@@ -42,6 +42,8 @@ class AuthService {
         email: email.toLowerCase(),
         password,
         name,
+        investmentKnowledge: investmentKnowledge || 'Principiante',
+        riskAppetite: riskAppetite || 'Conservador',
         preferences: {
           favoriteStocks: [],
           notifications: true,

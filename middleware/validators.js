@@ -60,7 +60,17 @@ const validateUserRegistration = [
       }
       return true;
     })
-    .withMessage("Debe aceptar los términos y condiciones")
+    .withMessage("Debe aceptar los términos y condiciones"),
+
+  body("investmentKnowledge")
+    .optional()
+    .isIn(['Principiante', 'Intermedio', 'Avanzado'])
+    .withMessage("El conocimiento de inversión debe ser: Principiante, Intermedio o Avanzado"),
+  
+  body("riskAppetite")
+    .optional()
+    .isIn(['Conservador', 'Moderado', 'Agresivo'])
+    .withMessage("El apetito de riesgo debe ser: Conservador, Moderado o Agresivo")
 ];
 
 // Middleware para validar login de usuario

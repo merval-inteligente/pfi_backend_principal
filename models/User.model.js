@@ -51,6 +51,16 @@ const UserSchema = new mongoose.Schema({
       default: 'system'
     }
   },
+  investmentKnowledge: {
+    type: String,
+    enum: ['Principiante', 'Intermedio', 'Avanzado'],
+    default: 'Principiante'
+  },
+  riskAppetite: {
+    type: String,
+    enum: ['Conservador', 'Moderado', 'Agresivo'],
+    default: 'Conservador'
+  },
   lastLogin: {
     type: Date,
     default: Date.now
@@ -108,6 +118,8 @@ UserSchema.methods.getPublicProfile = function() {
     email: this.email,
     name: this.name,
     avatar: this.avatar,
+    investmentKnowledge: this.investmentKnowledge,
+    riskAppetite: this.riskAppetite,
     preferences: this.preferences,
     createdAt: this.createdAt,
     lastLogin: this.lastLogin

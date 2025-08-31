@@ -6,7 +6,7 @@ class AuthController {
   // Registro de usuarios
   async register(req, res) {
     try {
-      const { email, password, name, acceptTerms } = req.body;
+      const { email, password, name, acceptTerms, investmentKnowledge, riskAppetite } = req.body;
 
       // Convertir acceptTerms de string a boolean si viene de FormData
       const termsAccepted = acceptTerms === 'true' || acceptTerms === true;
@@ -16,7 +16,9 @@ class AuthController {
         email,
         password,
         name,
-        acceptTerms: termsAccepted
+        acceptTerms: termsAccepted,
+        investmentKnowledge,
+        riskAppetite
       });
 
       // Si hay avatar, subirlo después de crear el usuario
