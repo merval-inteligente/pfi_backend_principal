@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
 const CloudinaryService = require("../services/cloudinary");
+const { mailSender } = require("../services/nodemailer");
 const jwt = require("jsonwebtoken");
 
 class AuthService {
@@ -219,6 +220,117 @@ class AuthService {
       
       await user.save();
       return user.getPublicProfile();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Solicitar reset de contraseña - Generar y enviar código
+  async requestPasswordReset(email) {
+    try {
+      const user = await User.findOne({ email: email.toLowerCase() });
+      if (!user) {
+        // Por seguridad, no revelamos si el email existe o no
+        return {
+          success: true,
+          message: 'Si el email existe, recibirás un código de verificación'
+        };
+      }
+
+      // Generar código de 6 dígitos
+      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Configurar expiración (15 minutos)
+      const codeExpires = new Date(Date.now() + 15 * 60 * 1000);
+
+      // Guardar código en el usuario
+      user.resetPasswordCode = resetCode;
+      user.resetPasswordCodeExpires = codeExpires;
+      await user.save();
+
+      // Enviar email con el código
+      const emailSubject = 'Código de recuperación de contraseña - MERVAL';
+      const emailText = `
+Hola ${user.name},
+
+Has solicitado restablecer tu contraseña en MERVAL.
+
+Tu código de verificación es: ${resetCode}
+
+Este código expira en 15 minutos.
+
+Si no solicitaste este cambio, puedes ignorar este email.
+
+Saludos,
+Equipo MERVAL
+      `;
+
+      await mailSender(user.email, emailSubject, emailText);
+
+      return {
+        success: true,
+        message: 'Código de verificación enviado a tu email'
+      };
+
+    } catch (error) {
+      console.error('Error en requestPasswordReset:', error);
+      throw new Error('Error al procesar solicitud de reset');
+    }
+  }
+
+  // Verificar código de reset
+  async verifyResetCode(email, code) {
+    try {
+      const user = await User.findOne({ 
+        email: email.toLowerCase(),
+        resetPasswordCode: code,
+        resetPasswordCodeExpires: { $gt: new Date() }
+      });
+
+      if (!user) {
+        throw new Error('Código inválido o expirado');
+      }
+
+      return {
+        success: true,
+        message: 'Código verificado correctamente',
+        isValid: true
+      };
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Reset de contraseña con código
+  async resetPasswordWithCode(email, code, newPassword) {
+    try {
+      const user = await User.findOne({ 
+        email: email.toLowerCase(),
+        resetPasswordCode: code,
+        resetPasswordCodeExpires: { $gt: new Date() }
+      });
+
+      if (!user) {
+        throw new Error('Código inválido o expirado');
+      }
+
+      // Actualizar contraseña
+      user.password = newPassword;
+      
+      // Limpiar campos de reset
+      user.resetPasswordCode = undefined;
+      user.resetPasswordCodeExpires = undefined;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+
+      await user.save();
+
+      return {
+        success: true,
+        message: 'Contraseña actualizada exitosamente'
+      };
+
     } catch (error) {
       throw error;
     }

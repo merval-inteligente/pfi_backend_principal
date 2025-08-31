@@ -199,6 +199,55 @@ const validateSector = [
     .withMessage("Sector no es válido")
 ];
 
+// Middleware para validar solicitud de reset de contraseña
+const validatePasswordResetRequest = [
+  body("email")
+    .isEmail()
+    .withMessage("Debe ser un email válido")
+    .normalizeEmail()
+    .toLowerCase()
+];
+
+// Middleware para validar verificación de código
+const validateResetCode = [
+  body("email")
+    .isEmail()
+    .withMessage("Debe ser un email válido")
+    .normalizeEmail()
+    .toLowerCase(),
+  
+  body("code")
+    .notEmpty()
+    .withMessage("El código es requerido")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("El código debe tener 6 dígitos")
+    .isNumeric()
+    .withMessage("El código debe ser numérico")
+];
+
+// Middleware para validar cambio de contraseña
+const validatePasswordReset = [
+  body("email")
+    .isEmail()
+    .withMessage("Debe ser un email válido")
+    .normalizeEmail()
+    .toLowerCase(),
+  
+  body("code")
+    .notEmpty()
+    .withMessage("El código es requerido")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("El código debe tener 6 dígitos")
+    .isNumeric()
+    .withMessage("El código debe ser numérico"),
+  
+  body("newPassword")
+    .isLength({ min: 6 })
+    .withMessage("La nueva contraseña debe tener al menos 6 caracteres")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage("La contraseña debe contener al menos: 1 minúscula, 1 mayúscula y 1 número")
+];
+
 module.exports = {
   validateUserRegistration,
   validateUserLogin,
@@ -206,6 +255,9 @@ module.exports = {
   validatePreferencesPatch,
   validateStockSymbol,
   validateSector,
+  validatePasswordResetRequest,
+  validateResetCode,
+  validatePasswordReset,
   handleValidationErrors,
   getValidSymbols
 };

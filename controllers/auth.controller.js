@@ -355,6 +355,94 @@ class AuthController {
       });
     }
   }
+
+  // Solicitar reset de contraseña
+  async requestPasswordReset(req, res) {
+    try {
+      const { email } = req.body;
+
+      const result = await AuthService.requestPasswordReset(email);
+
+      return res.status(200).json({
+        success: true,
+        message: result.message
+      });
+
+    } catch (error) {
+      console.error('❌ Error al solicitar reset de contraseña:', error);
+
+      return res.status(500).json({
+        success: false,
+        message: "Error al procesar solicitud de reset",
+        error: "RESET_REQUEST_ERROR"
+      });
+    }
+  }
+
+  // Verificar código de reset
+  async verifyResetCode(req, res) {
+    try {
+      const { email, code } = req.body;
+
+      const result = await AuthService.verifyResetCode(email, code);
+
+      return res.status(200).json({
+        success: true,
+        message: result.message,
+        data: {
+          isValid: result.isValid
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error al verificar código:', error);
+
+      if (error.message.includes('inválido') || error.message.includes('expirado')) {
+        return res.status(400).json({
+          success: false,
+          message: error.message,
+          error: "INVALID_CODE"
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Error al verificar código",
+        error: "VERIFY_CODE_ERROR"
+      });
+    }
+  }
+
+  // Reset de contraseña con código
+  async resetPassword(req, res) {
+    try {
+      const { email, code, newPassword } = req.body;
+
+      const result = await AuthService.resetPasswordWithCode(email, code, newPassword);
+
+      return res.status(200).json({
+        success: true,
+        message: result.message
+      });
+
+    } catch (error) {
+      console.error('❌ Error al resetear contraseña:', error);
+
+      if (error.message.includes('inválido') || error.message.includes('expirado')) {
+        return res.status(400).json({
+          success: false,
+          message: error.message,
+          error: "INVALID_CODE"
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Error al resetear contraseña",
+        error: "RESET_PASSWORD_ERROR"
+      });
+    }
+  }
 }
 
 module.exports = new AuthController();

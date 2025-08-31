@@ -6,6 +6,9 @@ const { authenticateToken } = require("../../middleware/auth");
 const { 
   validateUserRegistration, 
   validateUserLogin, 
+  validatePasswordResetRequest,
+  validateResetCode,
+  validatePasswordReset,
   handleValidationErrors 
 } = require("../../middleware/validators");
 
@@ -116,6 +119,42 @@ router.get("/verify",
 router.get("/profile",
   authenticateToken,
   AuthController.verifyToken  // Reutilizamos el mismo método
+);
+
+/**
+ * @route   POST /api/auth/request-password-reset
+ * @desc    Solicitar reset de contraseña (envía código por email)
+ * @access  Public
+ * @body    { email }
+ */
+router.post("/request-password-reset",
+  validatePasswordResetRequest,
+  handleValidationErrors,
+  AuthController.requestPasswordReset
+);
+
+/**
+ * @route   POST /api/auth/verify-reset-code
+ * @desc    Verificar código de reset de contraseña
+ * @access  Public
+ * @body    { email, code }
+ */
+router.post("/verify-reset-code",
+  validateResetCode,
+  handleValidationErrors,
+  AuthController.verifyResetCode
+);
+
+/**
+ * @route   POST /api/auth/reset-password
+ * @desc    Resetear contraseña con código verificado
+ * @access  Public
+ * @body    { email, code, newPassword }
+ */
+router.post("/reset-password",
+  validatePasswordReset,
+  handleValidationErrors,
+  AuthController.resetPassword
 );
 
 module.exports = router;
