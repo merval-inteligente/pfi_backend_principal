@@ -111,17 +111,6 @@ router.get("/verify",
 );
 
 /**
- * @route   GET /api/auth/profile
- * @desc    Obtener perfil del usuario autenticado
- * @access  Private (requiere token)
- * @headers Authorization: Bearer <token>
- */
-router.get("/profile",
-  authenticateToken,
-  AuthController.verifyToken  // Reutilizamos el mismo método
-);
-
-/**
  * @route   POST /api/auth/request-password-reset
  * @desc    Solicitar reset de contraseña (envía código por email)
  * @access  Public

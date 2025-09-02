@@ -326,38 +326,6 @@ class AuthController {
     }
   }
 
-  // Verificar token y devolver información del usuario
-  async verifyToken(req, res) {
-    try {
-      // El middleware authenticateToken ya verificó el token y agregó req.user
-      const user = req.user;
-
-      return res.status(200).json({
-        success: true,
-        message: "Token válido",
-        data: {
-          user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            avatar: user.avatar || null,
-            isVerified: user.isVerified || false,
-            createdAt: user.createdAt
-          }
-        }
-      });
-
-    } catch (error) {
-      console.error('❌ Error al verificar token:', error);
-
-      return res.status(500).json({
-        success: false,
-        message: "Error al verificar token",
-        error: "VERIFY_ERROR"
-      });
-    }
-  }
-
   // Solicitar reset de contraseña
   async requestPasswordReset(req, res) {
     try {
