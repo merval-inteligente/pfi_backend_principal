@@ -63,6 +63,14 @@ La API estará disponible en `http://localhost:3000`
 - `POST /api/users/favorites` - Agregar a favoritos
 - `DELETE /api/users/favorites/:symbol` - Quitar de favoritos
 
+### Noticias MERVAL
+- `GET /api/news` - Listar todas las noticias (paginado)
+- `GET /api/news/search` - Buscar noticias por texto
+- `GET /api/news/advanced-search` - Búsqueda avanzada con filtros
+- `GET /api/news/companies` - Listar empresas mencionadas
+- `GET /api/news/company/:company` - Noticias de empresa específica
+- `GET /api/news/:id` - Obtener noticia por ID
+
 ### Email
 - `POST /api/mail/send` - Enviar email personalizado
 
