@@ -1,0 +1,57 @@
+# Ejemplo de terraform.tfvars
+# Copiar este archivo a terraform.tfvars y llenar con valores reales
+# NUNCA subir terraform.tfvars a Git
+
+extra_env = {
+  # Servidor
+  NODE_ENV    = "production"
+  PORT        = "8080"
+  HOST        = "0.0.0.0"
+  
+  # Base de datos
+  MONGODB_URI   = "mongodb+srv://usuario:password@cluster.mongodb.net/MervalDB"
+  DATABASE_NAME = "MervalDB"
+  DB_PORT       = "27017"
+  
+  # Seguridad
+  SECRET         = "tu-secret-key-super-segura-aqui"
+  JWT_EXPIRES_IN = "7d"
+  
+  # Cloudinary
+  CLOUDINARY_CLOUD_NAME = "tu-cloud-name"
+  CLOUDINARY_API_KEY    = "tu-api-key"
+  CLOUDINARY_API_SECRET = "tu-api-secret"
+  
+  # Archivos
+  UPLOAD_DIR    = "imagenes/"
+  MAX_FILE_SIZE = "5242880"
+  
+  # Email (Configurar según tu proveedor)
+  # Para Gmail:
+  # EMAIL_HOST = "smtp.gmail.com"
+  # EMAIL_PORT = "587"
+  # EMAIL_USER = "tu-email@gmail.com"
+  # EMAIL_PASS = "tu-app-password-de-gmail"  # Usar App Password, no tu contraseña normal
+  # EMAIL_FROM = "tu-email@gmail.com"
+  
+  # Para Outlook:
+  EMAIL_HOST = "smtp-mail.outlook.com"
+  EMAIL_PORT = "587"
+  EMAIL_USER = "tu-email@outlook.com"
+  EMAIL_PASS = "tu-password-segura"
+  EMAIL_FROM = "tu-email@outlook.com"
+  
+  # CORS
+  CORS_ORIGIN = "http://localhost:3000,http://localhost:3001"
+  
+  # Rate Limiting
+  RATE_LIMIT_WINDOW_MS    = "900000"
+  RATE_LIMIT_MAX_REQUESTS = "100"
+  
+  # Debug
+  DEBUG = "false"
+  
+  # URLs de otros servicios
+  ALERTAS_URL = "http://10.0.1.XXX:8000"
+  CHAT_URL    = "http://10.0.1.YYY:8084"
+}
