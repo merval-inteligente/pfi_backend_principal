@@ -10,7 +10,7 @@ echo "[$(date)] === Iniciando aprovisionamiento de ${APP_NAME} ==="
 # Actualizar sistema e instalar dependencias
 echo "[$(date)] Instalando Docker y Git..."
 dnf -y update
-dnf -y install docker git curl
+dnf -y install docker git --allowerasing
 systemctl enable --now docker
 usermod -aG docker ec2-user
 
