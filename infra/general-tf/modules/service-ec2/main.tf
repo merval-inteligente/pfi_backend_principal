@@ -1,46 +1,5 @@
-resource "aws_security_group" "svc_sg" {
-  name        = "${var.project}-${var.name}-sg"
-  description = "HTTP ${var.public_http_port} public + intra-VPC"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    description = "HTTP public"
-    from_port   = var.public_http_port
-    to_port     = var.public_http_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # intra VPC (mas seguro con vpc_cidr real)
-  ingress {
-    description = "intra VPC TCP"
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]
-  }
-
-  dynamic "ingress" {
-    for_each = var.enable_ssh ? [1] : []
-    content {
-      description = "SSH"
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      cidr_blocks = [var.ssh_cidr]
-    }
-  }
-
-  egress {
-    description = "Salida a Internet"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = { Name = "${var.project}-${var.name}-sg" }
-}
+# Security Groups se gestionan desde alertas-tf
+# Usamos los SGs compartidos via remote state
 
 data "template_file" "user_data" {
   template = file("${path.module}/user_data.tpl")
@@ -59,19 +18,11 @@ resource "aws_instance" "svc" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
   subnet_id                   = var.subnet_id
-  vpc_security_group_ids      = [aws_security_group.svc_sg.id, var.intra_sg_id]
+  vpc_security_group_ids      = var.security_group_ids
   associate_public_ip_address = true
   key_name                    = var.key_name != "" ? var.key_name : null
 
   user_data = data.template_file.user_data.rendered
 
   tags = { Name = "${var.project}-${var.name}" }
-}
-
-output "public_dns" {
-  value = aws_instance.svc.public_dns
-}
-
-output "private_ip" {
-  value = aws_instance.svc.private_ip
 }

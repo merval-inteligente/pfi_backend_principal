@@ -6,20 +6,16 @@ variable "project" {
   type = string
 }
 
-variable "vpc_id" {
-  type = string
-}
+# VPC y Security Groups vienen de alertas-tf via remote state
 
 variable "subnet_id" {
-  type = string
+  type        = string
+  description = "Subnet ID desde alertas-tf remote state"
 }
 
-variable "intra_sg_id" {
-  type = string
-}
-
-variable "vpc_cidr" {
-  type = string
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Security Group IDs desde alertas-tf remote state"
 }
 
 variable "ami_id" {
@@ -33,16 +29,6 @@ variable "instance_type" {
 variable "key_name" {
   type    = string
   default = ""
-}
-
-variable "enable_ssh" {
-  type    = bool
-  default = false
-}
-
-variable "ssh_cidr" {
-  type    = string
-  default = "0.0.0.0/0"
 }
 
 variable "container_port" {
