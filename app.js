@@ -53,17 +53,25 @@ const corsOptions = {
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://localhost:8081',  // Expo / React Native Web
+      'http://localhost:19000', // Expo DevTools
+      'http://localhost:19006', // Expo Web
       'https://your-production-domain.com'
     ];
     
+    // Permitir peticiones sin origin (apps móviles, Postman, etc)
+    // o desde orígenes permitidos
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`⚠️  CORS bloqueado para origin: ${origin}`);
       callback(new Error('No permitido por CORS'));
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
