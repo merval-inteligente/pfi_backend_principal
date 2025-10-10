@@ -64,7 +64,7 @@ variable "extra_env" {
     EMAIL_USER              = ""
     EMAIL_PASS              = ""
     EMAIL_FROM              = ""
-    CORS_ORIGIN             = "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:19000,http://localhost:19006,http://api-gateway-alb-1383961063.us-east-1.elb.amazonaws.com,https://api-gateway-alb-1383961063.us-east-1.elb.amazonaws.com"
+    CORS_ORIGIN             = "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:19000,http://localhost:19006,http://api-gateway-alb-1383961063.us-east-1.elb.amazonaws.com,https://api-gateway-alb-1383961063.us-east-1.elb.amazonaws.com,http://pfi-frontend-web-471112871602.s3-website-us-east-1.amazonaws.com"
     RATE_LIMIT_WINDOW_MS    = "900000"
     RATE_LIMIT_MAX_REQUESTS = "100"
     DEBUG                   = "false"
