@@ -50,14 +50,23 @@ app.use(express.urlencoded({
 // Configuración CORS mejorada
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:8081',  // Expo / React Native Web
-      'http://localhost:19000', // Expo DevTools
-      'http://localhost:19006', // Expo Web
-      'https://your-production-domain.com'
-    ];
+    // Leer orígenes permitidos desde variable de entorno (CSV)
+    const corsOriginEnv = process.env.CORS_ORIGIN || '';
+    const allowedOrigins = corsOriginEnv
+      .split(',')
+      .map(o => o.trim())
+      .filter(o => o.length > 0);
+    
+    // Fallback a localhost si no hay CORS_ORIGIN configurado
+    if (allowedOrigins.length === 0) {
+      allowedOrigins.push(
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:8081',
+        'http://localhost:19000',
+        'http://localhost:19006'
+      );
+    }
     
     // Permitir peticiones sin origin (apps móviles, Postman, etc)
     // o desde orígenes permitidos
@@ -65,16 +74,21 @@ const corsOptions = {
       callback(null, true);
     } else {
       console.warn(`⚠️  CORS bloqueado para origin: ${origin}`);
-      callback(new Error('No permitido por CORS'));
+      // NO lanzar Error (causa 500) - rechazar con callback(null, false)
+      callback(null, false);
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200,
+  optionsSuccessStatus: 204,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 };
 
 app.use(cors(corsOptions));
+
+// Handler explícito para preflight OPTIONS en todas las rutas
+app.options('*', cors(corsOptions));
+
 app.use(cookieParser());
 
 //Indico las rutas de los endpoint
