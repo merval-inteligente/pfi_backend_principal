@@ -147,8 +147,6 @@ class MervalService {
    */
   async getMervalPriceFallback() {
     try {
-      console.log('⚠️ Usando fuente alternativa para precio del Merval (BYMA)...');
-      
       // Intentar con API de BYMA
       const url = "https://open.bymadata.com.ar/vanoms-be-core/rest/api/bymadata/free/index/I.MERV";
       

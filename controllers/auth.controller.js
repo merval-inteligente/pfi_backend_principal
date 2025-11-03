@@ -25,7 +25,6 @@ class AuthController {
       let avatarResult = null;
       if (req.file) {
         try {
-          console.log('📸 Subiendo avatar durante registro...');
           avatarResult = await CloudinaryService.uploadAvatar(req.file.buffer, result.user.id);
           
           // Actualizar usuario con avatar
@@ -37,7 +36,6 @@ class AuthController {
           
           // Actualizar el objeto user en el resultado con el perfil actualizado
           result.user = updatedUser;
-          console.log('✅ Avatar subido exitosamente durante registro');
         } catch (avatarError) {
           console.warn('⚠️ Error subiendo avatar durante registro:', avatarError.message);
           // No fallar el registro por error de avatar

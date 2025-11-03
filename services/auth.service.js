@@ -8,9 +8,6 @@ class AuthService {
   // Verificar si un email ya existe
   async checkEmailExists(email) {
     try {
-      console.log('🔍 Verificando email:', email);
-      console.log('📦 User model:', typeof User, User.findOne ? 'findOne disponible' : 'findOne NO disponible');
-      
       const user = await User.findOne({ email: email.toLowerCase() });
       return !!user;
     } catch (error) {

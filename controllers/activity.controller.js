@@ -30,13 +30,6 @@ class ActivityController {
 
       // Aquí puedes guardar en base de datos si lo necesitas
       // await ActivityModel.create(activityLog);
-      
-      // Por ahora solo logging para monitoreo
-      console.log(`📊 Chat Activity - Usuario: ${authenticatedUserId}`, {
-        activityType,
-        service,
-        timestamp: activityLog.timestamp
-      });
 
       res.status(200).json({
         success: true,

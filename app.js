@@ -101,7 +101,6 @@ const mongoose = require("mongoose");
 const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/TestUser';
-    console.log('🔍 URI de MongoDB:', mongoURI);
     
     await mongoose.connect(mongoURI, {
       maxPoolSize: 10,
@@ -114,14 +113,11 @@ const connectDB = async () => {
     // Importar modelos para registrarlos
     require('./models/User.model');
     require('./models/Symbol.model');
-    console.log('📦 Modelos registrados:', Object.keys(mongoose.models));
     
   } catch (error) {
     console.error('❌ Error conectando a MongoDB:', error.message);
     if (process.env.NODE_ENV === 'production') {
       process.exit(1);
-    } else {
-      console.log('⚠️ Continuando en modo desarrollo sin base de datos...');
     }
   }
 };
@@ -135,7 +131,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.log('⚠️ Desconectado de MongoDB');
+  console.error('⚠️ Desconectado de MongoDB');
 });
 
 // Graceful shutdown (solo en producción o cuando realmente se necesite)
@@ -144,7 +140,6 @@ if (process.platform !== 'win32' || process.env.NODE_ENV === 'production') {
   process.on('SIGINT', async () => {
     try {
       await mongoose.connection.close();
-      console.log('🔒 Conexión a MongoDB cerrada');
       process.exit(0);
     } catch (error) {
       console.error('❌ Error al cerrar la conexión:', error);
