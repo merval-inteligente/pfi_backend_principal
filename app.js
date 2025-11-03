@@ -138,17 +138,20 @@ mongoose.connection.on('disconnected', () => {
   console.log('⚠️ Desconectado de MongoDB');
 });
 
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  try {
-    await mongoose.connection.close();
-    console.log('🔒 Conexión a MongoDB cerrada');
-    process.exit(0);
-  } catch (error) {
-    console.error('❌ Error al cerrar la conexión:', error);
-    process.exit(1);
-  }
-});
+// Graceful shutdown (solo en producción o cuando realmente se necesite)
+// En Windows/desarrollo, PowerShell puede enviar SIGINT inesperadamente
+if (process.platform !== 'win32' || process.env.NODE_ENV === 'production') {
+  process.on('SIGINT', async () => {
+    try {
+      await mongoose.connection.close();
+      console.log('🔒 Conexión a MongoDB cerrada');
+      process.exit(0);
+    } catch (error) {
+      console.error('❌ Error al cerrar la conexión:', error);
+      process.exit(1);
+    }
+  });
+}
 
 // Middleware de manejo de errores global
 app.use((err, req, res, next) => {

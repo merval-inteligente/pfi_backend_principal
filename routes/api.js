@@ -8,6 +8,7 @@ var mailRoutes = require("./api/mail.route");
 var preferencesRoutes = require("./api/preferences.route");
 var activityRoutes = require("./api/activity.route");
 var newsRoutes = require("./api/news.route");
+var mervalRoutes = require("./api/merval.route");
 
 // Rutas básicas
 router.use("/base", baseRoutes);
@@ -26,5 +27,8 @@ router.use("/activity", activityRoutes);
 
 // Rutas de noticias MERVAL
 router.use("/news", newsRoutes);
+
+// Rutas del índice Merval (precio, histórico)
+router.use("/merval", mervalRoutes);
 
 module.exports = router;
