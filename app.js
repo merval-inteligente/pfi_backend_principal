@@ -4,7 +4,6 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
-const rateLimit = require("express-rate-limit");
 const dotenv = require("dotenv");
 
 // Configurar variables de entorno
@@ -29,16 +28,6 @@ app.use(helmet({
 
 // Compresión de respuestas
 app.use(compression());
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // máximo 100 requests por ventana de tiempo
-  message: "Demasiadas solicitudes desde esta IP, intenta más tarde.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use(limiter);
 
 // Configuración de middleware básico
 app.use(express.json({ limit: '10mb' }));
