@@ -36,9 +36,9 @@ app.use(express.urlencoded({
   limit: '10mb' 
 }));
 
-// Configuración CORS - Abierto a todos los orígenes
+
 const corsOptions = {
-  origin: true, // Permitir TODOS los orígenes
+  origin: true, 
   credentials: true,
   optionsSuccessStatus: 204,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

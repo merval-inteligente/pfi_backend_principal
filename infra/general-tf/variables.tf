@@ -66,7 +66,7 @@ variable "extra_env" {
     EMAIL_FROM              = ""
     CORS_ORIGIN             = "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:19000,http://localhost:19006,http://api-gateway-alb-1383961063.us-east-1.elb.amazonaws.com,https://api-gateway-alb-1383961063.us-east-1.elb.amazonaws.com,http://pfi-frontend-web-471112871602.s3-website-us-east-1.amazonaws.com"
     RATE_LIMIT_WINDOW_MS    = "900000"
-    RATE_LIMIT_MAX_REQUESTS = "100"
+    RATE_LIMIT_MAX_REQUESTS = "10000"
     DEBUG                   = "false"
     ALERTAS_URL             = "http://XXX.XXX.XXX.XXX:8000"
     CHAT_URL                = "http://YYY.YYY.YYY.YYY:8084"
