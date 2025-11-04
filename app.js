@@ -36,37 +36,9 @@ app.use(express.urlencoded({
   limit: '10mb' 
 }));
 
-// Configuración CORS mejorada
+// Configuración CORS - Abierto a todos los orígenes
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Leer orígenes permitidos desde variable de entorno (CSV)
-    const corsOriginEnv = process.env.CORS_ORIGIN || '';
-    const allowedOrigins = corsOriginEnv
-      .split(',')
-      .map(o => o.trim())
-      .filter(o => o.length > 0);
-    
-    // Fallback a localhost si no hay CORS_ORIGIN configurado
-    if (allowedOrigins.length === 0) {
-      allowedOrigins.push(
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:8081',
-        'http://localhost:19000',
-        'http://localhost:19006'
-      );
-    }
-    
-    // Permitir peticiones sin origin (apps móviles, Postman, etc)
-    // o desde orígenes permitidos
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`⚠️  CORS bloqueado para origin: ${origin}`);
-      // NO lanzar Error (causa 500) - rechazar con callback(null, false)
-      callback(null, false);
-    }
-  },
+  origin: true, // Permitir TODOS los orígenes
   credentials: true,
   optionsSuccessStatus: 204,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
