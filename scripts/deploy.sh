@@ -11,7 +11,7 @@ echo "🚀 Despliegue de general-service"
 echo "=========================================="
 
 # Variables
-REPO_URL="https://github.com/nicopetcoff/pfi_backend_principal.git"
+REPO_URL="https://github.com/merval-inteligente/pfi_backend_principal.git"
 APP_DIR="/home/ec2-user/general-service"
 BRANCH="master"
 
