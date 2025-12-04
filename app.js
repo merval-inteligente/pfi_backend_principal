@@ -146,11 +146,13 @@ app.use('*', (req, res) => {
 
 // Server Port
 const port = process.env.PORT || 8080;
+const host = '0.0.0.0';
 
 // Escuchar en el puerto
-const server = app.listen(port, () => {
+const server = app.listen(port, host, () => {
   console.log('🚀 Servidor MERVAL iniciado en el puerto ' + port);
   console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📡 Escuchando en ${host}:${port}`);
 });
 
 module.exports = app;
